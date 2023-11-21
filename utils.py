@@ -50,15 +50,15 @@ class Compiler:
     def pastebin(self, text: str):
         url = "https://dpaste.org/api/"
     
-        r = requests.post(
+        r = self.session.post(
             url=url,
             data={
-                'content': text.encode('utf-8'),
+                "content": text.encode("utf-8"),
             },
         )
     
         resp = r.text
-        out = resp.replace('"', '')
+        out = resp.replace('"', "")
         return out
 
     def generate_output(self, response: str, code: str):
@@ -91,3 +91,31 @@ class Compiler:
 
 class CompilerException(Exception):
     pass
+
+
+def reply_markup(switch_inline_query):
+    return InlineKeyboardMarkup([InlineKeyboardButton("Share", switch_inline_query=switch_inline_query)])
+
+async def get_code_from_message(message):
+    if message.reply_to_message:
+        replied_message = message.reply_to_message
+
+        if replied_message.text:
+            return replied_message.text
+        elif replied_message.document:
+            try:
+                document = await replied_message.download()
+                with open(document, "r") as file:
+                    code = file.read()
+                os.remove(document)
+            except Exception as e:
+                return await message.reply(f"**Error reading document:**\n```{e}```", parse_mode=ParseMode.MARKDOWN, quote=True)
+    else:
+        return " ".join(message_text.split(" ")[2:])
+
+def extract_stdin_from_message(message_text):
+    stdin = ""
+    if "/stdin" in message_text:
+        stdin = " ".join(message_text.split("/stdin ")[1:])
+        message_text = message_text.replace("/stdin " + stdin, "")
+    return stdin, message_text

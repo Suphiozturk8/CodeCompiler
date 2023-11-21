@@ -1,17 +1,20 @@
+from utils import Compiler, CompilerException
 
-from utils import Compiler
+# Create an instance of the Compiler class
+compiler = Compiler()
 
-r = Compiler()
+# Enter the language, code, and stdin (if needed) you want to test
+language = "python3"
+code = "print('Hello, World! 👻')"
+stdin = ""  # Optional: add stdin input here if needed
 
 try:
-    response = r.(
-        "python3",
-        "print('Hello')")
+    # Execute the code
+    response = compiler.execute(language, code, stdin)
 
-    print(response)
-except Exception as e:
-    print(e)
-    exit(-1)
+    # Generate output to display the result
+    output = compiler.generate_output(response, code)
+    print(output)
 
-print("\nTest completed")
-exit(0)
+except CompilerException as e:
+    print(f"Error: {e}")

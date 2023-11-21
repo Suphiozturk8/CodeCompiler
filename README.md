@@ -2,7 +2,7 @@
 # My Code Compiler Bot
 
 ## Overview
-This is a Telegram bot that allows you to compile and run code snippets in various programming languages using an online code compiler API.
+This Telegram bot enables compiling and running code snippets in various programming languages using an online code compiler API.
 
 ## Inspirations
 - This project was inspired by [fswair's CPP17 Compiler](https://github.com/fswair/CPP17_Compiler). Special thanks for their amazing work!
@@ -11,6 +11,7 @@ This is a Telegram bot that allows you to compile and run code snippets in vario
 - Compile code in multiple languages.
 - Optionally provide input through stdin.
 - View output, memory usage, and CPU time.
+- Share the code in the chat you want using the button.
 
 ## Getting Started
 1. Clone the repository: `git clone https://github.com/suphiozturk8/CodeCompiler.git && cd CodeCompiler`
@@ -21,7 +22,7 @@ This is a Telegram bot that allows you to compile and run code snippets in vario
 ## Usage
 - Use the `/run` command followed by the language and code snippet.
 - Optionally use `/stdin` to provide input through stdin.
-- ```/run <language> <code or reply_code_text or reply_code_document> [/stdin input]```
+- ```/run <language> <code or reply_code_text or reply_code_document> [/stdin <stdin>]```
 
 Examples:
 ```
@@ -29,6 +30,12 @@ Examples:
 ```
 ```
 /run python3 print(input("Enter your name: ")) /stdin Suphi
+```
+
+## Usage in Inline Mode
+To use in inline mode, mention the bot followed by the language and code snippet:
+```
+@bot_username <language> <code> [/stdin <stdin>]
 ```
 
 ## Contributing

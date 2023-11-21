@@ -20,23 +20,30 @@ START_MSG = """
 **You can use the /help command to learn how to use it.**
     """
 
+
 HELP_MSG = """
 **How to Use Code Compiler Bot:**
 
 **To run code, use the following format:**
 ```
-/run <language> <code or reply_code_text or reply_code_document> [/stdin input]
+/run <language> <code or reply_code_text or reply_code_document> [/stdin <stdin>]
 ```
 
 **Examples:**
 ```
 /run python3 print("Hello, World! 👻")
 ```
+
 ```
 /run python3 print(input("Enter your name: ")) /stdin Suphi
 ```
 
-**Replace** `<language>` **with the programming language you're using,** `<code>` **with your actual code, and** `[/stdin input]` **with optional input for your code.**
+**To use in inline mode:** 
+```
+@bot_username <language> <code> [/stdin <stdin>]
+```
 
-**Let's code together!** 🚀
-    """
+**Replace** `<language>` **with the programming language you're using,** `<code>` **with your actual code, and** `[/stdin <stdin>]` **with optional stdin for your code.**
+
+**Use the button below the printout to share the code in the chat you want! 🚀**
+"""

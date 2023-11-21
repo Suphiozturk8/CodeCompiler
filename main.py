@@ -48,37 +48,53 @@ async def run(app: Client, message: Message):
 
 @app.on_inline_query()
 async def answer(client, inline_query):
-    if inline_query.query:
-        message_text = inline_query.query
+    tit = "Usage:"
+    des = "@bot_username <language> <code> [/stdin <stdin>]"
+    thumb = "https://telegra.ph/file/de4444b6081a455edf9b3.png"
+    output_text = HELP_MSG
+    reply_m = None
 
+    if inline_query.query:
+        tit = "Run Code >_"
+        des = "Let's code together! 👻"
+        thumb = "https://telegra.ph/file/de4444b6081a455edf9b3.png"
+        reply_m = reply_markup(inline_query.query)
+
+        message_text = inline_query.query
         language = message_text.split()[0]
 
         stdin, message_text = extract_stdin_from_message(message_text)
-
         code = " ".join(message_text.split(" ")[1:])
 
-        reply_m = reply_markup(inline_query.query)
+        if language and code:
+            try:
+                response = code_compiler.execute(language=language, code=code, stdin=stdin)
+                output_text = code_compiler.generate_output(response, code)
+            except CompilerException as e:
+                output_text = e
+                reply_m = None
 
-        try:
-            response = code_compiler.execute(language=language, code=code, stdin=stdin)
+        if len(inline_query.query) > 256:
+            tit = "‼️ Message too long ‼️"
+            des = "[400 MESSAGE_TOO_LONG]"
+            thumb = "https://telegra.ph/file/a8203fb8d608bcc5aac99.png"
+            output_text = """
+**Your message is too long. Please provide a shorter query**
     
-            output_text = code_compiler.generate_output(response, code)
-        except CompilerException as e:
-            output_text = e
-            reply_m = None
-    
-        await inline_query.answer(
-            results=[
-                InlineQueryResultArticle(
-                    title="Run Code >_",
-                    description="Let's code together! 👻",
-                    url="https://github.com/Suphiozturk8/CodeCompiler",
-                    thumb_url="https://telegra.ph/file/de4444b6081a455edf9b3.png",
-                    input_message_content=InputTextMessageContent(output_text),
-                    reply_markup=reply_m
-                )
-            ],
-            cache_time=1)
+`Telegram says: [400 MESSAGE_TOO_LONG] - The message text is too long (caused by 'messages.SetInlineBotResults')`"""
+
+    await inline_query.answer(
+        results=[
+            InlineQueryResultArticle(
+                title=tit,
+                description=des,
+                url="https://github.com/Suphiozturk8/CodeCompiler",
+                thumb_url=thumb,
+                input_message_content=InputTextMessageContent(output_text, parse_mode=ParseMode.MARKDOWN),
+                reply_markup=reply_m
+            )
+        ],
+        cache_time=1)
 
 
 app.run()

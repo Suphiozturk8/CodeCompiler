@@ -1,8 +1,7 @@
 
-import os, requests
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, InlineQueryResultArticle, InputTextMessageContent
+from pyrogram.types import Message, InlineQueryResultArticle, InputTextMessageContent
 
 from utils import Compiler, CompilerException, reply_markup, get_code_from_message, extract_stdin_from_message
 from config import NAME, API_ID, API_HASH, BOT_TOKEN, START_MSG, HELP_MSG
@@ -36,7 +35,7 @@ async def run(app: Client, message: Message):
 
     stdin, message_text = extract_stdin_from_message(message_text)
 
-    code = await get_code_from_message(message)
+    code = await get_code_from_message(message, message_text)
 
     try:
         response = code_compiler.execute(language=language, code=code, stdin=stdin)

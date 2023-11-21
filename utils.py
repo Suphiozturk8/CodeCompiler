@@ -1,4 +1,6 @@
-import requests
+import requests, os
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 from languages import LANGUAGES
 from config import RAPID_API_KEY
 
@@ -68,9 +70,9 @@ class Compiler:
             response["memory"])
         cpu_time = response["cpuTime"]
 
-        _code = f"```{language_info['id']}\n{code}```" if len(code) < 4096 else f"[Code]({self.pastebin(code)})"
-
-        _output = f"```text\n{output}```" if len(output) < 4096 else f"[Output]({self.pastebin(output)})"
+        _code = f"```{language_info['id']}\n{code}```" if code and len(code) < 4096 else "" if not code else f"[Code]({self.pastebin(code)})"
+        
+        _output = f"```text\n{output}```" if output and len(output) < 4096 else "" if not output else f"[Output]({self.pastebin(output)})"
 
         __output = f"""
 **Language:** {language_info['id']}
@@ -94,9 +96,9 @@ class CompilerException(Exception):
 
 
 def reply_markup(switch_inline_query):
-    return InlineKeyboardMarkup([InlineKeyboardButton("Share", switch_inline_query=switch_inline_query)])
+    return InlineKeyboardMarkup([[InlineKeyboardButton("Share", switch_inline_query=switch_inline_query)]])
 
-async def get_code_from_message(message):
+async def get_code_from_message(message, message_text):
     if message.reply_to_message:
         replied_message = message.reply_to_message
 
@@ -108,6 +110,7 @@ async def get_code_from_message(message):
                 with open(document, "r") as file:
                     code = file.read()
                 os.remove(document)
+                return code
             except Exception as e:
                 return await message.reply(f"**Error reading document:**\n```{e}```", parse_mode=ParseMode.MARKDOWN, quote=True)
     else:
